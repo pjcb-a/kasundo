@@ -86,3 +86,9 @@ class DebtRequest(Base):
         "User",
         foreign_keys=[borrower_id]
     )
+
+    debt = relationship(
+        "Debt",
+        back_populates="request",
+        uselist=False
+    )

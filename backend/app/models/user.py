@@ -81,3 +81,13 @@ class User(Base):
         "DebtRequest",
         foreign_keys="DebtRequest.borrower_id"
     )
+
+    active_lent_debts = relationship(
+    "Debt",
+    foreign_keys="Debt.lender_id"
+)
+
+active_borrowed_debts = relationship(
+    "Debt",
+    foreign_keys="Debt.borrower_id"
+)

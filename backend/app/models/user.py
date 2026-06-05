@@ -72,6 +72,8 @@ class User(Base):
         onupdate=func.now()
     )
 
+
+
     lent_request = relationship(
         "DebtRequest",
         foreign_keys="DebtRequest.lender_id"
@@ -87,7 +89,18 @@ class User(Base):
     foreign_keys="Debt.lender_id"
 )
 
-active_borrowed_debts = relationship(
+    active_borrowed_debts = relationship(
     "Debt",
     foreign_keys="Debt.borrower_id"
 )
+
+    notifications = relationship(
+        "Notifications",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    activity_logs = relationship(
+        "ActivityLog",
+        back_populates="actor"
+    )

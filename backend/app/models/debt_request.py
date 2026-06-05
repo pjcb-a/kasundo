@@ -77,6 +77,8 @@ class DebtRequest(Base):
         nullable=True
     )
 
+
+
     lender = relationship(
         "User",
         foreign_keys=[lender_id]

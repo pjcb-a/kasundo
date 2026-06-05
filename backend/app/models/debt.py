@@ -78,6 +78,8 @@ class Debt(Base):
         nullable=True
     )
 
+
+
     request = relationship(
         "DebtRequest",
         back_populates="debt"
@@ -91,4 +93,16 @@ class Debt(Base):
     borrower = relationship(
         "User",
         foreign_keys=[borrower_id]
+    )
+
+    payments = relationship(
+        "Payment",
+        back_populates="debt",
+        cascade="all, delete-orphan"
+    )
+
+    activity_logs = relationship(
+        "ActivityLog",
+        back_populates="debt",
+        cascade="all, delete-orphan"
     )

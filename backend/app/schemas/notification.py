@@ -1,15 +1,14 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.enums import NotificationType
 
-
-class NotificationMarkRead(BaseModel):
-    is_read: boll=True
+from app.schemas.common import ORMBaseSchema
 
 
-class NotificationResponse(BaseModel):
+
+class NotificationResponse(ORMBaseSchema):
     notification_id: int
     user_id: int
     title: str
@@ -18,10 +17,8 @@ class NotificationResponse(BaseModel):
     is_read: bool
     created_at: datetime
 
-    class Config: 
-        from_attributes = True
 
-class NotificationSummary(BaseModel):
+class NotificationSummary(ORMBaseSchema):
     notification_id: int
     title: str
     type: NotificationType

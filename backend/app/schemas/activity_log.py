@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from app.schemas.common import ORMBaseSchema
 
-
-class ActivityLogResponse(BaseModel):
+class ActivityLogResponse(ORMBaseSchema):
     log_id: int
     debt_id: int
     actor_id: int
@@ -11,12 +10,7 @@ class ActivityLogResponse(BaseModel):
     details: str | None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
-class ActivityLogSummary(BaseModel):
+class ActivityLogSummary(ORMBaseSchema):
     action: str
-
     details: str | None
-
     created_at: datetime

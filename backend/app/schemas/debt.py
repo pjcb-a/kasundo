@@ -5,8 +5,9 @@ from pydantic import BaseModel
 
 from app.enums import DebtStatus
 
+from app.schemas.common import ORMBaseSchema
 
-class DebtResponse(BaseModel):
+class DebtResponse(ORMBaseSchema):
     debt_id: int
     request_id: int
     lender_id: int
@@ -18,11 +19,10 @@ class DebtResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None
     settled_at: datetime | None
-    
-    class Config: from_attributes = True
 
 
-class DebtSummary(BaseModel):
+
+class DebtSummary(ORMBaseSchema):
     debt_id: int
     original_amount: float
     remaining_balance: float

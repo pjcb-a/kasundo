@@ -1,31 +1,54 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+
+from app.schemas.common import ORMBaseSchema
 
 class UserBase(BaseModel):
-    first_name: str
-    last_name: str
+    first_name: str = Field(
+        min_length=2,
+        max_length=100
+    )
+    last_name: str = Field(
+        min_length=2,
+        max_length=100
+    )
     email: EmailStr
-    phone_number: str
+    phone_number: str = Field(
+        min_length=11,
+        max_length=20
+    )
 
 class UserCreate(UserBase):
-    password_hash: str
+    password: str = Field(
+        min_length=8,
+        max_length=128
+    )
 
 
-class UserUpdate(UserBase):
-    first_name: str | None = none
-    last_name: str | None = none
-    phone_number: str | None = none
-    profile_picture: str | None = none 
+class UserUpdate(BaseModel):
+    first_name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=100
+    )
+    last_name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=100
+    )
+    phone_number: str | None = Field(
+        default=None,
+        min_length=11,
+        max_length=20
+    )
+    profile_picture: str | None = None
 
 
-class UserResponse(UserBase):
+class UserResponse(UserBase, ORMBaseSchema):
     user_id: int 
-    profile_picture: str | None = none
+    profile_picture: str | None = None
     is_verified: bool 
-    create_at: datetime
+    created_at: datetime
     updated_at: datetime
-
-    class Config:
-        from_attributes = True
     

@@ -20,7 +20,6 @@ backend/**/*.py[cod]
 backend/.pytest_cache/
 backend/.mypy_cache/
 backend/.ruff_cache/
-
 # Virtual Environments
 backend/venv/
 backend/.venv/

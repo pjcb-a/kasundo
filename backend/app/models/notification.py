@@ -3,9 +3,12 @@ from sqlalchemy import (
     Column,
     DateTime,
     Integer,
-    String
+    String,
+    ForeignKey,
+    Enum
 )
 
+from app.enums import NotificationType 
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base

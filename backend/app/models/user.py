@@ -95,7 +95,7 @@ class User(Base):
 )
 
     notifications = relationship(
-        "Notifications",
+        "Notification",
         back_populates="user",
         cascade="all, delete-orphan"
     )

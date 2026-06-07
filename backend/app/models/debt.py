@@ -87,12 +87,14 @@ class Debt(Base):
 
     lender = relationship(
         "User",
-        foreign_keys=[lender_id]
+        foreign_keys=[lender_id],
+        back_populates="active_lent_debts"
     )
 
     borrower = relationship(
         "User",
-        foreign_keys=[borrower_id]
+        foreign_keys=[borrower_id],
+        back_populates="active_borrowed_debts"
     )
 
     payments = relationship(

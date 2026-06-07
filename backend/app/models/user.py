@@ -74,24 +74,28 @@ class User(Base):
 
 
 
-    lent_request = relationship(
+    lent_requests = relationship(
         "DebtRequest",
-        foreign_keys="DebtRequest.lender_id"
+        foreign_keys="DebtRequest.lender_id",
+        back_populates="lender"
     )
     
-    borrowed_request = relationship(
+    borrowed_requests = relationship(
         "DebtRequest",
-        foreign_keys="DebtRequest.borrower_id"
+        foreign_keys="DebtRequest.borrower_id",
+        back_populates="borrower"
     )
 
     active_lent_debts = relationship(
     "Debt",
-    foreign_keys="Debt.lender_id"
+    foreign_keys="Debt.lender_id",
+    back_populates="lender"
 )
 
     active_borrowed_debts = relationship(
     "Debt",
-    foreign_keys="Debt.borrower_id"
+    foreign_keys="Debt.borrower_id",
+    back_populates="borrower"
 )
 
     notifications = relationship(

@@ -13,6 +13,10 @@ class UserBase(BaseModel):
         min_length=2,
         max_length=100
     )
+    username: str = Field(
+        min_length=3,
+        max_length=30
+    )
     email: EmailStr
     phone_number: str = Field(
         min_length=11,
@@ -36,6 +40,11 @@ class UserUpdate(BaseModel):
         default=None,
         min_length=2,
         max_length=100
+    )
+    username: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=30
     )
     phone_number: str | None = Field(
         default=None,

@@ -12,3 +12,9 @@ class InvalidCredentialsException(Exception):
 
 class UserNotFoundException(Exception):
     pass
+
+
+class UsernameAlreadyExistsException(
+    Exception
+):
+    pass

@@ -17,8 +17,21 @@ from app.security import (
 from app.exceptions import (
     UserAlreadyExistsException,
     PhoneNumberAlreadyExistsException,
-    InvalidCredentialsException
+    InvalidCredentialsException,
+    UsernameAlreadyExistsException
 )
+
+
+def get_user_by_username(
+    db: Session,
+    username: str
+):
+
+    return (
+        db.query(User)
+        .filter(User.username == username)
+        .first()
+    )
 
 
 
@@ -48,6 +61,27 @@ def get_user_by_phone(
 
 
 
+def get_user_by_login(
+    db: Session,
+    login: str
+) -> User | None:
+    
+    if "@" in login:
+        return get_user_by_email(
+            db, login
+        )
+
+    if login.isdigit():
+        return get_user_by_phone(
+            db, login
+        )
+
+    return get_user_by_username(
+        db, login
+    )
+
+
+
 def register_user(
     db: Session, 
     user_data: UserCreate
@@ -71,6 +105,16 @@ def register_user(
         raise PhoneNumberAlreadyExistsException()
 
 
+    existing_username = get_user_by_username(
+        db,
+        user_data.username
+    )
+
+    if existing_username:
+        raise UsernameAlreadyExistsException()
+
+
+
     hashed_password = hash_password(
         user_data.password
     )
@@ -79,6 +123,7 @@ def register_user(
     user = User(
         first_name=user_data.first_name,
         last_name=user_data.last_name,
+        username=user_data.username,
         email=user_data.email,
         phone_number=user_data.phone_number,
         password_hash=hashed_password
@@ -99,9 +144,9 @@ def authenticate_user(
     login_data: LoginRequest
 ) -> TokenResponse:
 
-    user = get_user_by_email(
+    user = get_user_by_login(
         db, 
-        login_data.email
+        login_data.login
     )
 
     if not user:

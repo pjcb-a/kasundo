@@ -25,7 +25,8 @@ from app.models.user import User
 from app.exceptions import (
     UserAlreadyExistsException,
     PhoneNumberAlreadyExistsException,
-    InvalidCredentialsException
+    InvalidCredentialsException,
+    UsernameAlreadyExistsException
 )
 
 router = APIRouter(
@@ -61,6 +62,12 @@ def register(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Phone number already exists."
+        )
+
+    except UsernameAlreadyExistsException:
+        raise HTTPException(
+            status_code=409,
+            detail="Username already exists."
         )
 
 

@@ -32,13 +32,22 @@ class User(Base):
     email = Column(
         String(255),
         unique=True,
-        nullable=False
+        nullable=False,
+        index=True
+    )
+
+    username = Column(
+        String(50),
+        nullable=False,
+        unique=True,
+        index=True
     )
 
     phone_number = Column(
         String(20),
         unique=True,
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     password_hash = Column(

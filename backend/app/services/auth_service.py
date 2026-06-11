@@ -5,8 +5,7 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 
 from app.schemas.user import UserCreate
-from app.schemas.auth import LoginRequest
-from app.schemas.auth import TokenResponse
+from app.schemas.auth import LoginRequest, TokenResponse
 
 from app.security import (
     hash_password,

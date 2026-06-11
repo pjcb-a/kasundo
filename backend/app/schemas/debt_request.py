@@ -51,3 +51,16 @@ class DebtRequestResponse(ORMBaseSchema):
     updated_at: datetime | None
     responded_at: datetime | None
     acknowledged_at: datetime | None
+
+
+
+class DebtRequestAccept(BaseModel):
+    pass
+
+
+
+class DebtRequestSummary(ORMBaseSchema):
+    request_id: int
+    amount: float
+    status: DebtRequestStatus
+    due_date: date

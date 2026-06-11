@@ -14,7 +14,17 @@ class UserNotFoundException(Exception):
     pass
 
 
-class UsernameAlreadyExistsException(
-    Exception
-):
+class UsernameAlreadyExistsException(Exception):
+    pass
+
+
+class BorrowerNotFoundException(Exception):
+    pass
+
+
+class CannotRequestYourselfException(Exception):
+    pass
+
+
+class InvalidDueDateException(Exception):
     pass

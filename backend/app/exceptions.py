@@ -28,3 +28,12 @@ class CannotRequestYourselfException(Exception):
 
 class InvalidDueDateException(Exception):
     pass
+
+class DebtRequestNotFoundException(Exception):
+    pass
+
+class UnauthorizedDebtRequestActionException(Exception):
+    pass
+
+class DebtRequestAlreadyProcessedException(Exception):
+    pass

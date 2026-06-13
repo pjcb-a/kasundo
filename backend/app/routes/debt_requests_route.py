@@ -6,6 +6,7 @@ from fastapi import (
 from sqlalchemy.orm import Session
 from app.database import get_db
 
+from app.schemas.debt import DebtResponse
 from app.schemas.debt_request import (
     DebtRequestCreate, DebtRequestResponse
 )
@@ -16,13 +17,21 @@ from app.models.user import User
 from app.services.debt_request_service import (
     create_debt_request,
     get_sent_requests,
-    get_received_requests
+    get_received_requests,
+    accept_debt_request,
+    reject_debt_request
 )
 
 from app.exceptions import (
     BorrowerNotFoundException,
     CannotRequestYourselfException,
-    InvalidDueDateException
+    InvalidDueDateException,
+    DebtRequestNotFoundException,
+    CannotRequestYourselfException,
+    InvalidDueDateException,
+    DebtRequestNotFoundException,
+    UnauthorizedDebtRequestActionException,
+    DebtRequestAlreadyProcessedException
 )
 
 
@@ -101,3 +110,79 @@ def get_my_received_requests(
         db=db,
         current_user=current_user
     )
+
+
+
+@router.patch(
+    "/{request_id}/accept",
+    response_model=DebtResponse
+)
+
+def accept_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    try:
+        return accept_debt_request(
+            db=db,
+            request_id=request_id,
+            current_user=current_user
+        )
+
+    except DebtRequestNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Debt request not found."
+        )
+
+    except UnauthorizedDebtRequestActionException:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not allowed to accept this request."
+        )
+
+    except DebtRequestAlreadyProcessedException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Debt request has already been processed."
+        )
+
+
+
+@router.patch(
+    "/{request_id}/reject",
+    response_model=DebtRequestResponse
+)
+
+def reject_request(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    try:
+        return reject_debt_request(
+            db=db,
+            request_id=request_id,
+            current_user=current_user
+        )
+
+    except DebtRequestNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Debt request not found."
+        )
+
+    except UnauthorizedDebtRequestActionException:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not allowed to reject this request."
+        )
+
+    except DebtRequestAlreadyProcessedException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Debt request has already been processed."
+        )

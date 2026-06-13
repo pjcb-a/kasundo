@@ -5,7 +5,8 @@ from sqlalchemy import (
     Numeric,
     Date,
     ForeignKey,
-    Enum
+    Enum,
+    String
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -62,7 +63,12 @@ class Debt(Base):
         default=DebtStatus.ACTIVE
     )
 
-    create_at = Column(
+    purpose = Column(
+        String(255),
+        nullable=False
+    )
+
+    created_at = Column(
         DateTime(timezone=True),
         server_default=func.now()
     )

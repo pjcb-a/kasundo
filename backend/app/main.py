@@ -1,7 +1,10 @@
 from fastapi import FastAPI
-from app.routes.auth import router as auth_router
 from app.database import Base, engine
+
+from app.routes.auth import ( router as auth_router )
 from app.routes.debt_requests_route import ( router as debt_requests_router )
+from app.routes.debts_route import ( router as debts_router )
+
 import app.models
 
 app = FastAPI(
@@ -13,6 +16,7 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(auth_router)
 app.include_router(debt_requests_router)
+app.include_router(debts_router)
 
 @app.get("/")
 def root():

@@ -19,6 +19,7 @@ class PaymentCreate(BaseModel):
     )
 
 
+
 class PaymentResponse(ORMBaseSchema):
     payment_id: int
     debt_id: int

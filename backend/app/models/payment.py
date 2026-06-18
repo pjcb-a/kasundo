@@ -44,8 +44,8 @@ class Payment(Base):
     )
 
     notes = Column(
-        String(100),
-        nullable=False
+        String(255),
+        nullable=True
     )
 
     paid_at = Column(

@@ -10,7 +10,7 @@ class DebtRequestStatus(str, Enum):
 
 class DebtStatus(str, Enum):
     ACTIVE = "Active"
-    PAID = "Paid"
+    SETTLED = "Settled"
     OVERDUE = "Overdue"
 
 

@@ -34,7 +34,7 @@ def create_payment(
 ):
 
     return record_payment(
-         debt_id=int,
+         debt_id=debt_id,
         payment_data=payment_data,
         db=db,
         current_user=current_user

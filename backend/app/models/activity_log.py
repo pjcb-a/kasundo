@@ -23,7 +23,7 @@ class ActivityLog(Base):
     debt_id = Column(
         Integer,
         ForeignKey("debts.debt_id"),
-        nullable=False
+        nullable=True
     )
 
     actor_id = Column(

@@ -22,3 +22,14 @@ class NotificationType(str, Enum):
     OVERDUE = "Overdue"
     PAYMENT_RECORDED = "PaymentRecorded"
     DEBT_SETTLED = "DebtSettled"
+
+
+
+class ActivityAction(str, Enum):
+    DEBT_REQUEST_CREATED = "DebtRequestCreated"
+    DEBT_REQUEST_ACCEPTED = "DebtRequestAccepted"
+    DEBT_REQUEST_REJECTED = "DebtRequestRejected"
+    PAYMENT_RECORDED = "PaymentRecorded"
+    DEBT_SETTLED = "DebtSettled"
+    NOTIFICATION_READ = "NotificationRead"
+    ALL_NOTIFICATIONS_READ = "AllNotificationsRead"

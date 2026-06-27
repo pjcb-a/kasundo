@@ -6,7 +6,11 @@ from datetime import datetime, UTC
 from app.models.debt import Debt
 from app.models.user import User
 
-from app.enums import DebtStatus
+from app.enums import (
+    DebtStatus, ActivityAction 
+)
+
+from app.services.activity_log_service import create_activity_log
 
 
 
@@ -95,6 +99,16 @@ def settle_debt(
     debt.status = DebtStatus.SETTLED
     debt.remaining_balance = 0
     debt.settled_at = datetime.now(UTC)
+
+
+    create_activity_log(
+    db=db,
+    user_id=current_user.user_id,
+    debt_id=debt.debt_id,
+    action=ActivityAction.DEBT_SETTLED,
+    details=f"Debt {debt.debt_id} was fully settled."
+    )
+
 
     db.commit()
     db.refresh(debt)

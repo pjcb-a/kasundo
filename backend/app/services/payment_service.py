@@ -4,10 +4,12 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.enums import ( 
-    DebtStatus, NotificationType
+    DebtStatus, NotificationType, 
+    ActivityAction
     )
 
 from app.services.notification_service import create_notification
+from app.services.activity_log_service import create_activity_log
 
 from app.models.debt import Debt
 from app.models.payment import Payment
@@ -67,6 +69,14 @@ def record_payment(
     
     debt.remaining_balance -= payment_data.amount_paid
 
+    create_activity_log(
+    db=db,
+    actor_id=current_user.user_id,
+    debt_id=debt.debt_id,
+    action=ActivityAction.PAYMENT_RECORDED,
+    details=f"User {current_user.user_id} recorded a payment of {payment_data.amount_paid} for Debt {debt.debt_id}."
+    )
+
     create_notification(
     db=db,
     user_id=debt.lender_id,
@@ -82,23 +92,29 @@ def record_payment(
         debt.status = DebtStatus.SETTLED
         debt.settled_at = datetime.now(timezone.utc)
 
+        create_notification(
+        db=db,
+        user_id=debt.lender_id,
+        notification_type=NotificationType.DEBT_SETTLED,
+        title="Debt Settled",
+        message="A debt has been fully settled."
+        )
 
+        create_notification(
+        db=db,
+        user_id=debt.borrower_id,
+        notification_type=NotificationType.DEBT_SETTLED,
+        title="Debt Settled",
+        message="A debt has been fully settled."
+        )
 
-    create_notification(
-    db=db,
-    user_id=debt.lender_id,
-    notification_type=NotificationType.DEBT_SETTLED,
-    title="Debt Settled",
-    message="A debt has been fully settled."
-    )
-
-    create_notification(
-    db=db,
-    user_id=debt.borrower_id,
-    notification_type=NotificationType.DEBT_SETTLED,
-    title="Debt Settled",
-    message="A debt has been fully settled."
-    )
+        create_activity_log(
+        db=db,
+        actor_id=current_user.user_id,
+        debt_id=debt.debt_id,
+        action=ActivityAction.DEBT_SETTLED,
+        details=f"Debt {debt.debt_id} was fully settled."
+)
 
     db.commit()
     db.refresh(payment)

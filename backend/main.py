@@ -5,7 +5,7 @@ from app.routes.auth import ( router as auth_router )
 from app.routes.debt_requests_route import ( router as debt_requests_router )
 from app.routes.debts_route import ( router as debts_router )
 from app.routes.payments_route import ( router as payments_router )
-
+from app.routes.notifications_route import ( router as notifications_router )
 
 import app.models
 
@@ -20,6 +20,7 @@ app.include_router(auth_router)
 app.include_router(debt_requests_router)
 app.include_router(debts_router)
 app.include_router(payments_router)
+app.include_router(notifications_router)
 
 @app.get("/")
 def root():

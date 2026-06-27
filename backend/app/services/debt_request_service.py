@@ -6,8 +6,11 @@ from app.models.user import User
 from app.models.debt import Debt
 from app.models.debt_request import DebtRequest
 from app.enums import(
-    DebtRequestStatus, DebtStatus
+    DebtRequestStatus, DebtStatus,
+    NotificationType
 )
+
+from app.services.notification_service import create_notification
 
 from app.schemas.debt_request import DebtRequestCreate
 from app.exceptions import (
@@ -19,7 +22,7 @@ from app.exceptions import (
     DebtRequestNotFoundException
 )
 
-
+# CONNECTING NOTIFS TO DEBT REQ !!
 
 def create_debt_request(
     db: Session,
@@ -53,6 +56,15 @@ def create_debt_request(
     )
 
     db.add(debt_request)
+    
+    create_notification(
+    db=db,
+    user_id=request_data.borrower_id,
+    notification_type=NotificationType.DEBT_REQUEST,
+    title="New Debt Request",
+    message="You received a new debt request."
+    )
+
     db.commit()
     db.refresh(debt_request)
 
@@ -137,6 +149,15 @@ def accept_debt_request(
     )
 
     db.add(new_debt)
+
+    create_notification(
+    db=db,
+    user_id=debt_request.lender_id,
+    notification_type=NotificationType.DEBT_ACCEPTED,
+    title="Debt Request Accepted",
+    message="Your debt request was accepted."
+    )
+
     db.commit()
     db.refresh(new_debt)
 
@@ -170,8 +191,16 @@ def reject_debt_request(
     debt_request.status = DebtRequestStatus.REJECTED
     debt_request.responded_at = datetime.now(UTC)
 
-    db.commit()
+    create_notification(
+    db=db,
+    user_id=debt_request.lender_id,
+    notification_type=NotificationType.DEBT_REJECTED,
+    title="Debt Request Rejected",
+    message="Your debt request was rejected."
+    )
 
+
+    db.commit()
     db.refresh(debt_request)
 
     return debt_request

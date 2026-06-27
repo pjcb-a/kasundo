@@ -3,7 +3,12 @@ from datetime import datetime, timezone
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.enums import DebtStatus
+from app.enums import ( 
+    DebtStatus, NotificationType
+    )
+
+from app.services.notification_service import create_notification
+
 from app.models.debt import Debt
 from app.models.payment import Payment
 from app.models.user import User
@@ -58,14 +63,43 @@ def record_payment(
         notes=payment_data.notes
     )
 
+    db.add(payment)
+    
     debt.remaining_balance -= payment_data.amount_paid
+
+    create_notification(
+    db=db,
+    user_id=debt.lender_id,
+    notification_type=NotificationType.PAYMENT_RECORDED,
+    title="Payment Recorded",
+    message="A payment was recorded for your debt."
+    )
+
+
 
     if debt.remaining_balance <= 0:
         debt.remaining_balance = 0
         debt.status = DebtStatus.SETTLED
         debt.settled_at = datetime.now(timezone.utc)
 
-    db.add(payment)
+
+
+    create_notification(
+    db=db,
+    user_id=debt.lender_id,
+    notification_type=NotificationType.DEBT_SETTLED,
+    title="Debt Settled",
+    message="A debt has been fully settled."
+    )
+
+    create_notification(
+    db=db,
+    user_id=debt.borrower_id,
+    notification_type=NotificationType.DEBT_SETTLED,
+    title="Debt Settled",
+    message="A debt has been fully settled."
+    )
+
     db.commit()
     db.refresh(payment)
 

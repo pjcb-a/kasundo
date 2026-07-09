@@ -31,12 +31,27 @@ def create_activity_log(
 
 def get_my_activity_logs(
     db: Session,
-    current_user: User
+    current_user: User,
+    limit: int = 10,
+    offset: int = 0,
+    action: ActivityAction | None = None
 ) -> list[ActivityLog]:
-    return (
+
+    query = (
         db.query(ActivityLog)
         .filter(ActivityLog.actor_id == current_user.user_id)
+    )
+
+    if action is not None:
+        query = query.filter(
+            ActivityLog.action == action.value
+        )
+
+    return (
+        query
         .order_by(ActivityLog.created_at.desc())
+        .offset(offset)
+        .limit(limit)
         .all()
     )
 
@@ -45,7 +60,10 @@ def get_my_activity_logs(
 def get_debt_activity_logs(
     debt_id: int,
     db: Session,
-    current_user: User
+    current_user: User,
+    limit: int = 10,
+    offset: int = 0,
+    action: ActivityAction | None = None
 ) -> list[ActivityLog]:
 
 
@@ -67,9 +85,22 @@ def get_debt_activity_logs(
             detail="Access denied."
         )
 
-    return (
+    query = (
         db.query(ActivityLog)
         .filter(ActivityLog.debt_id == debt_id)
+    )
+
+    if action is not None:
+        query = query.filter(
+            ActivityLog.action == action.value
+        )
+
+    return (
+        query
         .order_by(ActivityLog.created_at.desc())
+        .offset(offset)
+        .limit(limit)
         .all()
     )
+
+ 

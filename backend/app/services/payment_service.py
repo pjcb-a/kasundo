@@ -28,6 +28,7 @@ def record_payment(
     debt = (
         db.query(Debt)
         .filter(Debt.debt_id == debt_id)
+        .with_for_update()
         .first()
     )
 
@@ -126,8 +127,10 @@ def record_payment(
 def get_debt_payments(
     debt_id: int,
     db: Session,
-    current_user: User
-):
+    current_user: User,
+    limit: int = 10,
+    offset: int = 0
+) -> list[Payment]:
     debt = (
         db.query(Debt)
         .filter(Debt.debt_id == debt_id)
@@ -156,5 +159,7 @@ def get_debt_payments(
         db.query(Payment)
         .filter(Payment.debt_id == debt_id)
         .order_by(Payment.paid_at.desc())
+        .offset(offset)
+        .limit(limit)
         .all()
     )

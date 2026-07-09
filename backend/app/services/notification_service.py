@@ -28,12 +28,25 @@ def create_notification(
 
 def get_my_notifications(
     db: Session, 
-    current_user: User
+    current_user: User,
+    limit: int = 10,
+    offset: int = 0,
+    is_read: bool | None = None
 ) -> list[Notification]:
-    return (
+
+    query = (
         db.query(Notification)
         .filter(Notification.user_id == current_user.user_id)
+    )
+
+    if is_read is not None:
+        query = query.filter(Notification.is_read == is_read)
+
+    return (
+        query
         .order_by(Notification.created_at.desc())
+        .offset(offset)
+        .limit(limit)
         .all()
     )
 
@@ -88,3 +101,16 @@ def mark_all_notifications_as_read(
     db.commit()
 
     return notifications
+
+
+
+def get_unread_notifications_count(
+    db: Session,
+    current_user: User
+) -> int:
+    return (
+        db.query(Notification)
+        .filter(Notification.user_id == current_user.user_id)
+        .filter(Notification.is_read == False)
+        .count()
+    )

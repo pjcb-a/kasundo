@@ -146,11 +146,23 @@ def get_recent_activity(
     db: Session,
     current_user: User,
     limit: int = 5
-):
+) -> list[ActivityLog]:
 
-    return(
+    user_id = current_user.user_id
+
+    return (
         db.query(ActivityLog)
-        .filter(ActivityLog.actor_id == current_user.user_id)
+        .outerjoin(
+            Debt,
+            ActivityLog.debt_id == Debt.debt_id
+        )
+        .filter(
+            or_(
+                ActivityLog.actor_id == user_id,
+                Debt.lender_id == user_id,
+                Debt.borrower_id == user_id
+            )
+        )
         .order_by(ActivityLog.created_at.desc())
         .limit(limit)
         .all()

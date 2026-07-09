@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends
-from typing import List
+from fastapi import APIRouter, Depends, Query
+from typing import List, Literal
 
 from sqlalchemy.orm import Session
 from app.database import get_db
 
 from app.models.user import User
 from app.schemas.debt import DebtResponse
+from app.enums import DebtStatus
 
 from app.security import get_current_user
 
@@ -27,12 +28,25 @@ router = APIRouter(
 )
 
 def get_my_debts(
+    role: Literal["lender", "borrower"] | None = Query(
+        default=None
+    ),
+    debt_status: DebtStatus | None = Query(
+        default=None,
+        alias="status"
+    ),
+    limit: int = Query(default=10, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     return get_user_debts(
         db=db,
-        current_user=current_user
+        current_user=current_user,
+        role=role,
+        debt_status=debt_status,
+        limit=limit,
+        offset=offset
     )
 
 

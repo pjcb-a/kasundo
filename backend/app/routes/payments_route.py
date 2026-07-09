@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import List
 from sqlalchemy.orm import Session
 
@@ -44,11 +44,14 @@ def create_payment(
 
 @router.get(
     "/debt/{debt_id}",
-    response_model=List[PaymentResponse]
+    response_model=List[PaymentResponse],
+    summary="Get Debt Payment History"
 )
 
 def get_payment_history(
     debt_id: int,
+    limit: int = Query(default=10, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -56,5 +59,7 @@ def get_payment_history(
     return get_debt_payments(
         debt_id=debt_id,
         db=db,
-        current_user=current_user
+        current_user=current_user,
+        limit=limit,
+        offset=offset
     )

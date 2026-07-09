@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from typing import List 
 from sqlalchemy.orm import Session
 
@@ -10,7 +10,7 @@ from app.schemas.notification import NotificationResponse
 
 from app.services.notification_service import (
     get_my_notifications, mark_notification_as_read,
-    mark_all_notifications_as_read
+    mark_all_notifications_as_read, get_unread_notifications_count
 )
 
 router = APIRouter(
@@ -27,13 +27,19 @@ router = APIRouter(
 )
 
 def get_notifications(
+    limit: int = Query(default=10, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
+    is_read: bool | None = Query(default=None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
     return get_my_notifications(
         db=db,
-        current_user=current_user
+        current_user=current_user,
+        limit=limit,
+        offset=offset,
+        is_read=is_read
     )
 
 
@@ -73,3 +79,23 @@ def read_all_notifications(
         db=db,
         current_user=current_user
     )
+
+
+
+@router.get(
+    "/unread-count",
+    summary="Get Unread Notifications Count"
+)
+
+def unread_notifications_count(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    count = get_unread_notifications_count(
+        db=db,
+        current_user=current_user
+    )
+
+    return {
+        "unread_count": count
+    }

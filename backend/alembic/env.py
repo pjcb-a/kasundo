@@ -1,9 +1,17 @@
 from logging.config import fileConfig
+import sys
+from pathlib import Path
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+if str(BASE_DIR) not in sys.path:
+    sys.path.append(str(BASE_DIR))
+
 from app.config import settings
 
 from app.database import Base
@@ -28,6 +36,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -35,9 +44,11 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+database_url = settings.DATABASE_URL.replace("%", "%%")
+
 config.set_main_option(
     "sqlalchemy.url",
-    settings.DATABASE_URL
+    database_url
 )
 
 
